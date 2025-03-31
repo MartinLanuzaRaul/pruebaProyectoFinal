@@ -24,5 +24,11 @@ Route::get('/import-servants', [ApiDataController::class, 'importServants']);
 
 
 
-Route::get('/game', [GameController::class, 'showGame']);
-Route::post('/game/check', [GameController::class, 'checkGuess']);
+Route::get('/juego', [GameController::class, 'showGame'])->name('juego');
+
+//
+Route::get('/personajeSecreto', [GameController::class, 'personajeSecreto']);
+
+Route::post('/comprobar', [GameController::class, 'comprobar'])->name('comprobar');
+
+
