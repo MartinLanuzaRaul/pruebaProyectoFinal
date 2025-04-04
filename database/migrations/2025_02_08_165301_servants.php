@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('atkBase');
             $table->string('hpBase');
             $table->string('img');
+            $table->string('faceImg');
             $table->string('noblePhantasmCard');
             $table->string('noblePhantasmEffect');
             $table->timestamps();

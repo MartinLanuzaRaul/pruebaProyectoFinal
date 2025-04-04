@@ -117,13 +117,11 @@ foreach (session('resultados', []) as $resultado) {
     <table class="result-table">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Servant</th>
                 <th>Gender</th>
                 <th>Class</th>
                 <th>Rarity</th>
                 <th>Attribute</th>
-                <th>ATK Base</th>
-                <th>HP Base</th>
                 <th>NP Type</th>
                 <th>NP Range</th>
             </tr>
@@ -131,13 +129,12 @@ foreach (session('resultados', []) as $resultado) {
         <tbody>
             @foreach (session('resultados', []) as $resultado)
                 <tr>
-                    <td>{{ $resultado['nombre'] }}</td>
+                    <td><img src="{{ $resultado['atributos']->faceImg }}" alt="Imagen" style="max-width: 100px; height: auto; display: block; margin: auto;">
+                    </td>
                     <td>{{ $resultado['atributos']->gender }}</td>
                     <td>{{ $resultado['atributos']->className }}</td>
                     <td>{{ $resultado['atributos']->rarity }}</td>
                     <td>{{ $resultado['atributos']->attribute }}</td>
-                    <td>{{ $resultado['atributos']->atkBase }}</td>
-                    <td>{{ $resultado['atributos']->hpBase }}</td>
                     <td>{{ $resultado['atributos']->noblePhantasmCard }}</td>
                     <td>{{ $resultado['atributos']->noblePhantasmEffect }}</td>
                 </tr>

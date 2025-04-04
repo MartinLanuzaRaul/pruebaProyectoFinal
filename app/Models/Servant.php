@@ -18,6 +18,7 @@ class Servant extends Model
         'attribute',
         'gender',
         'img' ,
+        'faceImg' ,
         'atkBase' ,
         'hpBase' ,
         'noblePhantasmEffect'

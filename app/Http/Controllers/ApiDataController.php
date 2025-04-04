@@ -22,9 +22,15 @@ class ApiDataController extends Controller
                 if (isset($data[0])) {
                     foreach ($data as $servant) {
                         $img = $servant['extraAssets']['charaGraph']['ascension']['4'] ?? null;
+                        $faceImg = $servant['extraAssets']['faces']['ascension']['4'] ?? null;
+
     
                         if ($img == null) {
                             $img = $servant['extraAssets']['charaGraph']['ascension']['0'] ?? null;
+                        } 
+
+                        if ($faceImg == null) {
+                            $faceImg = $servant['extraAssets']['charaGraph']['ascension']['0'] ?? null;
                         } 
 
                         Servant::create([
@@ -37,6 +43,7 @@ class ApiDataController extends Controller
                             'atkBase' => $servant['atkBase'],
                             'hpBase' => $servant['hpBase'],
                             'img' => $img,
+                            'faceImg' => $faceImg,
                             'noblePhantasmCard' => $servant['noblePhantasms'][0]['card'] ?? null,
                             'noblePhantasmEffect' => $servant['noblePhantasms'][0]['effectFlags'][0] ?? null
                         ]);
