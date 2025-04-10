@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Servant;
+use App\Models\ServantSecreto;
+
 
 
 
@@ -13,13 +15,13 @@ class GameController extends Controller
     {
          // session()->forget('resultados'); // Borra intentos
         // session()->forget('error'); // Borra intentos
-        $personajeSecreto = $this->personajeSecreto();
+        $personajeSecreto = $this->asignarPersonajeSecreto();
         return view('game')->with('personajeSecreto', $personajeSecreto);
     }
 
 
 
-    public function personajeSecreto()
+   /* public function personajeSecreto()
     {
         $fechaActual = date('Y-m-d');
 
@@ -33,6 +35,56 @@ class GameController extends Controller
 
         return $personajeSecreto;
     }
+        */
+
+        public function asignarPersonajeSecreto()
+{
+    $fechaActual = gmdate('Y-m-d');
+    
+    // Ver si ya hay un personaje para hoy
+    $servantSecreto = ServantSecreto::where('fecha', $fechaActual)->first();
+
+    if (!$servantSecreto) {
+        // Si la base de datos esta vacia mete al primer servatnt
+        $personajeAleatorio = Servant::inRandomOrder()->first();
+        $servantSecreto = new ServantSecreto();
+        $servantSecreto->idServant = $personajeAleatorio->id;
+        $servantSecreto->fecha = $fechaActual;
+        $servantSecreto->save();
+    }
+
+    // No se actualiza el personaje si ya existe uno para el día
+
+    $personajeSecreto = Servant::find($servantSecreto->idServant);
+    
+    // Devolver la respuesta
+    return $personajeSecreto;
+}
+
+        
+
+public function mostrarPersonajeSecreto()
+{
+    $fechaActual = date('Y-m-d');
+    
+    // Obtener el personaje secreto del día
+    $servantSecreto = ServantSecreto::where('fecha', $fechaActual)->first();
+
+    if (!$servantSecreto) {
+        // Si no existe, asignar un personaje aleatorio y guardarlo
+        $personajeAleatorio = Servant::inRandomOrder()->first();
+        
+        $servantSecreto = new ServantSecreto();
+        $servantSecreto->personaje_id = $personajeAleatorio->id;
+        $servantSecreto->fecha = $fechaActual;
+        $servantSecreto->save();
+    }
+
+    // Pasamos el personaje secreto a la vista
+    return view('personajeSecreto', ['personajeSecreto' => $servantSecreto]);
+}
+
+
 
     public function comprobar(Request $request)
     {
@@ -40,7 +92,7 @@ class GameController extends Controller
             'nombre' => 'required|string',
         ]);
 
-        $personajeSecreto = $this->personajeSecreto();
+        $personajeSecreto = $this->asignarPersonajeSecreto();
 
 
         $personajeUsuario = Servant::where('name', $request->nombre)->first();
@@ -78,5 +130,16 @@ class GameController extends Controller
 
 
         return redirect()->route('juego');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('query');
+
+        $servants = Servant::where('name', 'like', "%{$query}%")
+            ->limit(10)
+            ->pluck('name');
+
+        return response()->json($servants);
     }
 }

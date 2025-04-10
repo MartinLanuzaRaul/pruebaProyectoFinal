@@ -82,12 +82,17 @@
     </div>
 @endif
 
-<div class="secreto-container">
+<<div class="secreto-container">
     <h2>Personaje Secreto (Depuración):</h2>
-    <p>Nombre: {{ $personajeSecreto->name }}</p>
-    <p>Clase: {{ $personajeSecreto->className }}</p>
-    <p>Rareza: {{ $personajeSecreto->rarity }}</p>
+    @if(isset($personajeSecreto))
+        <p>Nombre: {{ $personajeSecreto->name }}</p>
+        <p>Clase: {{ $personajeSecreto->className }}</p>
+        <p>Rareza: {{ $personajeSecreto->rarity }}</p>
+    @else
+        <p>No hay personaje secreto disponible por el momento.</p>
+    @endif
 </div>
+
 
 <?php
 $acertado = false;
@@ -103,7 +108,9 @@ foreach (session('resultados', []) as $resultado) {
 <div class="search-container">
     <form action="{{ route('comprobar') }}" method="POST">
         @csrf
-        <input type="text" name="nombre" class="search-input" placeholder="Introduce el nombre del personaje" required>
+        <input type="text" name="nombre" class="search-input" placeholder="Introduce el nombre del personaje" required autocomplete="off">
+        <div id="suggestions" style="margin-top: 10px; text-align: left; width: 300px; position: absolute; background: white; z-index: 999;"></div>
+
         <button type="submit" class="search-button">Probar</button>
     </form>
 </div>
@@ -141,6 +148,48 @@ foreach (session('resultados', []) as $resultado) {
             @endforeach
         </tbody>
     </table>
-
+    <script>
+        const input = document.querySelector('.search-input');
+        const suggestions = document.getElementById('suggestions');
+    
+        input.addEventListener('input', function () {
+            const query = this.value.trim();
+    
+            if (query.length === 0) {
+                suggestions.innerHTML = '';
+                return;
+            }
+    
+            fetch(`/autocompletar?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestions.innerHTML = '';
+    
+                    data.forEach(name => {
+                        const div = document.createElement('div');
+                        div.textContent = name;
+                        div.style.padding = '5px';
+                        div.style.cursor = 'pointer';
+                        div.style.backgroundColor = '#fff';
+                        div.style.border = '1px solid #ccc';
+                        div.style.borderTop = 'none';
+    
+                        div.addEventListener('click', () => {
+                            input.value = name;
+                            suggestions.innerHTML = '';
+                        });
+    
+                        suggestions.appendChild(div);
+                    });
+                });
+        });
+    
+        document.addEventListener('click', function (e) {
+            if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+                suggestions.innerHTML = '';
+            }
+        });
+    </script>
+    
 </body>
 </html>

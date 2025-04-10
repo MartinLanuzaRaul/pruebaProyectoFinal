@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiDataController;
 use App\Http\Controllers\GameController;
+use App\Models\Servant;
+use Illuminate\Http\Request;
+
+
 
 
 /*
@@ -30,5 +34,15 @@ Route::get('/juego', [GameController::class, 'showGame'])->name('juego');
 Route::get('/personajeSecreto', [GameController::class, 'personajeSecreto']);
 
 Route::post('/comprobar', [GameController::class, 'comprobar'])->name('comprobar');
+
+Route::get('/autocompletar', [GameController::class, 'search'])->name('autocompletar');
+
+Route::get('/asignarpersonajeSecreto', [GameController::class, 'asignarPersonajeSecreto']);
+
+Route::get('/personaje-secreto', [GameController::class, 'mostrarPersonajeSecreto']);
+
+
+
+
 
 
