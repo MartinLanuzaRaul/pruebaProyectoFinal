@@ -11,11 +11,12 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
             font-family: Arial, sans-serif;
         }
+        
         .search-container {
             text-align: center;
         }
@@ -39,42 +40,116 @@
         .search-button:hover {
             background-color: #0056b3;
         }
-        .alert {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-        }
-        .alert-success {
-            background-color: green; 
-        }
-        .alert-error {
-            background-color: red; 
-        }
-        .result-table {
-            margin-top: 20px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .result-table th, .result-table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        .result-table th {
-            background-color: #f2f2f2;
-        }
+        
+        .tablaServants {
+    border-collapse: separate;
+    border-spacing: 10px; /* Espacio entre celdas */
+    margin: 0 auto; /* Centrar la tabla */
+    table-layout: fixed;
+    width: auto;
+}
+
+/* Aplica a todas las celdas, incluyendo encabezados */
+.tablaServants th,
+.tablaServants td {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+/* Encabezado con color distinto */
+.tablaServants th {
+    background-color: #e0e0e0;
+}
+
+/* Colores para celdas correctas e incorrectas */
+.correct {
+    background-color: #b6f2b6; /* verde claro */
+}
+
+.incorrect {
+    background-color: #f8b6b6; /* rojo claro */
+}
+
+/* Imagen del Servant centrada y adaptada */
+.tablaServants td img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+        
+        .caja {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.cajaDentro {
+    background-color: #d9d9d9;
+    border: 5px solid black;
+    padding: 30px;
+    display: flex;
+    gap: 30px;
+    margin-bottom: 10%;
+}
+
+.textoCaja {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.textoCaja h2 {
+    margin: 0;
+}
+
+.textoCaja p {
+    margin: 10px 0;
+}
+
+.textoCaja .importante {
+    margin-top: 50px;
+    font-weight: bold;
+}
+
+.result-img {
+    max-width: 300px;
+    height: auto;
+    border: 5px solid black;
+}
+
     </style>
 </head>
 
 <body>
-    @foreach (session('resultados', []) as $resultado)
-    @if ($resultado['resultado'] === 'Correcto')
-        <tr>
-            <td>{{ $resultado['resultado'] }}</td>
-        </tr>
-    @endif
-@endforeach
+    <a href="{{route('home')}}"><div class="logo"><img id="logo" src="images/logo.png" height="350px" width="350px"></div></a>
+
+    <div class="caja" id="caja">
+        <div class="cajaDentro">
+            <div class="textoCaja">
+                <div>
+                    <h2>GUESS TODAY'S SERVANT</h2>
+                    <p>type any character to begin</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
 
     @if (session('error'))
     <div class="error-message">
@@ -82,7 +157,7 @@
     </div>
 @endif
 
-<<div class="secreto-container">
+<div class="secreto-container">
     <h2>Personaje Secreto (Depuración):</h2>
     @if(isset($personajeSecreto))
         <p>Nombre: {{ $personajeSecreto->name }}</p>
@@ -108,10 +183,10 @@ foreach (session('resultados', []) as $resultado) {
 <div class="search-container">
     <form action="{{ route('comprobar') }}" method="POST">
         @csrf
-        <input type="text" name="nombre" class="search-input" placeholder="Introduce el nombre del personaje" required autocomplete="off">
+        <input type="text" name="nombre" class="search-input" placeholder="Type Servant name..." required autocomplete="off">
         <div id="suggestions" style="margin-top: 10px; text-align: left; width: 300px; position: absolute; background: white; z-index: 999;"></div>
 
-        <button type="submit" class="search-button">Probar</button>
+        <button type="submit" class="search-button">Guess</button>
     </form>
 </div>
 @else
@@ -121,7 +196,7 @@ foreach (session('resultados', []) as $resultado) {
 @endif
     
 
-    <table class="result-table">
+    <table class="tablaServants">
         <thead>
             <tr>
                 <th>Servant</th>
@@ -135,19 +210,76 @@ foreach (session('resultados', []) as $resultado) {
         </thead>
         <tbody>
             @foreach (session('resultados', []) as $resultado)
-                <tr>
-                    <td><img src="{{ $resultado['atributos']->faceImg }}" alt="Imagen" style="max-width: 100px; height: auto; display: block; margin: auto;">
-                    </td>
-                    <td>{{ $resultado['atributos']->gender }}</td>
-                    <td>{{ $resultado['atributos']->className }}</td>
-                    <td>{{ $resultado['atributos']->rarity }}</td>
-                    <td>{{ $resultado['atributos']->attribute }}</td>
-                    <td>{{ $resultado['atributos']->noblePhantasmCard }}</td>
-                    <td>{{ $resultado['atributos']->noblePhantasmEffect }}</td>
-                </tr>
+            <tr>
+                <td>
+                    <img src="{{ $resultado['atributos']->faceImg }}" alt="Imagen" style="max-width: 100px; height: auto; display: block; margin: auto;">
+                </td>
+                @if($personajeSecreto->gender != $resultado['atributos']->gender)
+                    <td class="incorrect">{{ $resultado['atributos']->gender }}</td>
+                @else
+                  <td class="correct">{{ $resultado['atributos']->gender }}</td>
+                @endif
+                @if($personajeSecreto->className != $resultado['atributos']->className)
+                    <td class="incorrect">{{ $resultado['atributos']->className }}</td>
+                @else
+                    <td class="correct">{{ $resultado['atributos']->className }}</td>
+                @endif
+                @if($personajeSecreto->rarity != $resultado['atributos']->rarity)
+                 <td class="incorrect">{{ $resultado['atributos']->rarity }}</td>
+                @else
+                    <td class="correct">{{ $resultado['atributos']->rarity }}</td>
+                @endif       
+                @if($personajeSecreto->attribute != $resultado['atributos']->attribute)
+                    <td class="incorrect">{{ $resultado['atributos']->attribute }}</td>
+                @else
+                    <td class="correct">{{ $resultado['atributos']->attribute }}</td>
+                @endif      
+               @if($personajeSecreto->noblePhantasmCard != $resultado['atributos']->noblePhantasmCard)
+                    <td class="incorrect">{{ $resultado['atributos']->noblePhantasmCard }}</td>
+                @else
+                 <td class="correct">{{ $resultado['atributos']->noblePhantasmCard }}</td>
+                @endif
+                @if($personajeSecreto->noblePhantasmEffect != $resultado['atributos']->noblePhantasmEffect)
+                    <td class="incorrect">{{ $resultado['atributos']->noblePhantasmEffect }}</td>
+                @else
+                    <td class="correct">{{ $resultado['atributos']->noblePhantasmEffect }}</td>
+                @endif
+            </tr>
             @endforeach
         </tbody>
     </table>
+
+    @if($acertado)
+    <script>
+        window.onload = function() {
+            const cajaResultado = document.getElementById('cajaResultado');
+            if (cajaResultado) {
+                cajaResultado.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+    <div id="cajaResultado">
+<div class="caja" id="caja">
+    <div class="cajaDentro">
+        <div class="textoCaja">
+            <div>
+                <h2>NICE!</h2>
+                <h2>YOU GUESSED<br>{{ $personajeSecreto->name }}</h2>
+                <p>NUMBER OF TRYS: {{ session('numeroIntentos') }}</p>
+            </div>
+            <p class="importante">PLAY AGAIN IN<br>19:32</p>
+        </div>
+        <div>
+            <img src="{{ $personajeSecreto->img }}" class="result-img">
+        </div>
+    </div>
+</div>
+</div>
+@endif
+
+
+
+
     <script>
         const input = document.querySelector('.search-input');
         const suggestions = document.getElementById('suggestions');

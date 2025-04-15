@@ -19,13 +19,17 @@ class GameController extends Controller
         return view('game')->with('personajeSecreto', $personajeSecreto);
     }
 
+    public function showHome()
+    {
+        return view('home');
+    }
+
 
 
    /* public function personajeSecreto()
     {
         $fechaActual = date('Y-m-d');
 
-        // Verificamos si ya hay un personaje guardado para el día actual
         if (!session()->has("personajeSecreto_$fechaActual")) {
             $personajeSecreto = Servant::inRandomOrder()->first();
             session(["personajeSecreto_$fechaActual" => $personajeSecreto->id]);
@@ -41,16 +45,20 @@ class GameController extends Controller
 {
     $fechaActual = gmdate('Y-m-d');
     
-    // Ver si ya hay un personaje para hoy
+    // Ver personaje de hoy
     $servantSecreto = ServantSecreto::where('fecha', $fechaActual)->first();
 
     if (!$servantSecreto) {
-        // Si la base de datos esta vacia mete al primer servatnt
+        // Si no hay personaje meter uno
         $personajeAleatorio = Servant::inRandomOrder()->first();
         $servantSecreto = new ServantSecreto();
         $servantSecreto->idServant = $personajeAleatorio->id;
         $servantSecreto->fecha = $fechaActual;
         $servantSecreto->save();
+
+        session()->forget('resultados'); // Borra intentos
+        session()->forget('error'); // Borra intentos
+        session()->forget('numeroIntentos'); // Borra intentos
     }
 
     // No se actualiza el personaje si ya existe uno para el día
@@ -67,20 +75,19 @@ public function mostrarPersonajeSecreto()
 {
     $fechaActual = date('Y-m-d');
     
-    // Obtener el personaje secreto del día
+    // Ver personaje de hoy
     $servantSecreto = ServantSecreto::where('fecha', $fechaActual)->first();
 
     if (!$servantSecreto) {
-        // Si no existe, asignar un personaje aleatorio y guardarlo
+        // Si no hay personaje meter uno
         $personajeAleatorio = Servant::inRandomOrder()->first();
-        
         $servantSecreto = new ServantSecreto();
         $servantSecreto->personaje_id = $personajeAleatorio->id;
         $servantSecreto->fecha = $fechaActual;
         $servantSecreto->save();
     }
 
-    // Pasamos el personaje secreto a la vista
+    
     return view('personajeSecreto', ['personajeSecreto' => $servantSecreto]);
 }
 
@@ -103,8 +110,11 @@ public function mostrarPersonajeSecreto()
 
         //intentos del usuario
         $resultados = session('resultados', []);
+        $numeroIntentos = session('numeroIntentos', 0); 
+        $numeroIntentos++;
+        session(['numeroIntentos' => $numeroIntentos]); 
 
-        //evita duplicados de intento de personaje
+        
         foreach ($resultados as $resultado) {
             if ($resultado['nombre'] === $personajeUsuario->name) {
                 return redirect()->route('juego')->with('error', 'Este personaje ya ha sido probado.');
