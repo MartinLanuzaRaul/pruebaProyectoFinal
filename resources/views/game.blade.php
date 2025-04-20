@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Juego - Servant Secreto</title>
+    <link rel="preload" as="image" href="/images/background.png">
+    <title>Fatedle - Classic</title>
     <style>
         body {
             display: flex;
@@ -14,8 +15,13 @@
             margin: 0;
             background: url('/images/background.png') no-repeat center center fixed;
             background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             font-family: Arial, sans-serif;
         }
+
+        
         
         .search-container {
             text-align: center;
@@ -43,13 +49,13 @@
         
         .tablaServants {
     border-collapse: separate;
-    border-spacing: 10px; /* Espacio entre celdas */
-    margin: 0 auto; /* Centrar la tabla */
+    border-spacing: 10px; /
+    margin: 0 auto; 
     table-layout: fixed;
     width: auto;
+    margin-bottom: 5%;
 }
 
-/* Aplica a todas las celdas, incluyendo encabezados */
 .tablaServants th,
 .tablaServants td {
     border: 2px solid #ccc;
@@ -65,21 +71,18 @@
     overflow: hidden;
 }
 
-/* Encabezado con color distinto */
 .tablaServants th {
     background-color: #e0e0e0;
 }
 
-/* Colores para celdas correctas e incorrectas */
 .correct {
-    background-color: #b6f2b6; /* verde claro */
+    background-color: #b6f2b6; 
 }
 
 .incorrect {
-    background-color: #f8b6b6; /* rojo claro */
+    background-color: #f8b6b6; 
 }
 
-/* Imagen del Servant centrada y adaptada */
 .tablaServants td img {
     width: 100px;
     height: 100px;
@@ -131,11 +134,32 @@
     border: 5px solid black;
 }
 
+.login {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: black;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
 <body>
+    <a href="{{route('login')}}"><button class="login">Account</button></a>
     <a href="{{route('home')}}"><div class="logo"><img id="logo" src="images/logo.png" height="350px" width="350px"></div></a>
+
+    @if ($stats)
+    <div>Racha actual: {{ $stats->currentStreak }}</div>
+                            
+
+        
+         
+    @endif
+    
 
     <div class="caja" id="caja">
         <div class="cajaDentro">
@@ -191,7 +215,7 @@ foreach (session('resultados', []) as $resultado) {
 </div>
 @else
 <div class="success-message">
-    <h2>¡Has acertado el personaje!</h2>
+    <h2>You got it!</h2>
 </div>
 @endif
     
@@ -267,7 +291,11 @@ foreach (session('resultados', []) as $resultado) {
                 <h2>YOU GUESSED<br>{{ $personajeSecreto->name }}</h2>
                 <p>NUMBER OF TRYS: {{ session('numeroIntentos') }}</p>
             </div>
-            <p class="importante">PLAY AGAIN IN<br>19:32</p>
+            <div>
+                <div>Next game in</div>
+                <div id="cuentaAtras"></div>
+            </div>
+            
         </div>
         <div>
             <img src="{{ $personajeSecreto->img }}" class="result-img">
@@ -278,7 +306,27 @@ foreach (session('resultados', []) as $resultado) {
 @endif
 
 
-
+<script>
+    //cortesia de https://stackoverflow.com/questions/54256629/countdown-to-midnight-refresh-every-day    
+    var div=document.getElementById("cuentaAtras");
+ 
+ setInterval(function(){ 
+   var toDate=new Date();
+   var tomorrow=new Date();
+   tomorrow.setUTCHours(24,0,0,0);
+   var diffMS=tomorrow.getTime()/1000-toDate.getTime()/1000;
+   var diffHr=Math.floor(diffMS/3600);
+   diffMS=diffMS-diffHr*3600;
+   var diffMi=Math.floor(diffMS/60);
+   diffMS=diffMS-diffMi*60;
+   var diffS=Math.floor(diffMS);
+   var result=((diffHr<10)?"0"+diffHr:diffHr);
+   result+=":"+((diffMi<10)?"0"+diffMi:diffMi);
+   result+=":"+((diffS<10)?"0"+diffS:diffS);
+   div.innerHTML=result;
+   
+ },1000);
+</script>
 
     <script>
         const input = document.querySelector('.search-input');
@@ -322,6 +370,7 @@ foreach (session('resultados', []) as $resultado) {
             }
         });
     </script>
+    
     
 </body>
 </html>

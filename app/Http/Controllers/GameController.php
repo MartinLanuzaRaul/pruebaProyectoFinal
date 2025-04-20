@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Servant;
+use App\Models\Stats;
 use App\Models\ServantSecreto;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -15,8 +17,15 @@ class GameController extends Controller
     {
          // session()->forget('resultados'); // Borra intentos
         // session()->forget('error'); // Borra intentos
+
+        $stats = null;
+        if (Auth::check()) {
+            $user = Auth::user();
+            $stats = Stats::where('idUser', $user->id)->first();
+        }
+
         $personajeSecreto = $this->asignarPersonajeSecreto();
-        return view('game')->with('personajeSecreto', $personajeSecreto);
+        return view('game', ['stats' => $stats], ['personajeSecreto' => $personajeSecreto]);
     }
 
     public function showHome()
@@ -61,36 +70,11 @@ class GameController extends Controller
         session()->forget('numeroIntentos'); // Borra intentos
     }
 
-    // No se actualiza el personaje si ya existe uno para el día
 
     $personajeSecreto = Servant::find($servantSecreto->idServant);
     
-    // Devolver la respuesta
     return $personajeSecreto;
 }
-
-        
-
-public function mostrarPersonajeSecreto()
-{
-    $fechaActual = date('Y-m-d');
-    
-    // Ver personaje de hoy
-    $servantSecreto = ServantSecreto::where('fecha', $fechaActual)->first();
-
-    if (!$servantSecreto) {
-        // Si no hay personaje meter uno
-        $personajeAleatorio = Servant::inRandomOrder()->first();
-        $servantSecreto = new ServantSecreto();
-        $servantSecreto->personaje_id = $personajeAleatorio->id;
-        $servantSecreto->fecha = $fechaActual;
-        $servantSecreto->save();
-    }
-
-    
-    return view('personajeSecreto', ['personajeSecreto' => $servantSecreto]);
-}
-
 
 
     public function comprobar(Request $request)
@@ -105,29 +89,38 @@ public function mostrarPersonajeSecreto()
         $personajeUsuario = Servant::where('name', $request->nombre)->first();
 
         if (!$personajeUsuario) {
-            return redirect()->route('juego')->with('error', 'El personaje no existe. Intenta de nuevo.');
+            return redirect()->route('juego')->with('error', 'There is not a Servant with that name.');
         }
 
         //intentos del usuario
         $resultados = session('resultados', []);
         $numeroIntentos = session('numeroIntentos', 0); 
+        $rachaActual = session('rachaActual', 0); 
         $numeroIntentos++;
         session(['numeroIntentos' => $numeroIntentos]); 
 
-        
         foreach ($resultados as $resultado) {
             if ($resultado['nombre'] === $personajeUsuario->name) {
-                return redirect()->route('juego')->with('error', 'Este personaje ya ha sido probado.');
+                $numeroIntentos--;
+                session(['numeroIntentos' => $numeroIntentos]);
+                return redirect()->route('juego')->with('error', 'You already tried that one.');
             }
         }
 
+        $acertado = false;
 
         if ($personajeSecreto->name == $personajeUsuario->name) {
+            $acertado = true;
+
             array_unshift($resultados, [
                 'nombre' => $personajeUsuario->name,
                 'resultado' => 'Correcto',
                 'atributos' => $personajeUsuario
             ]);
+
+            $rachaActual++;
+            session(['rachaActual' => $rachaActual]);
+
         } else {
             array_unshift($resultados, [
                 'nombre' => $personajeUsuario->name,
@@ -136,11 +129,52 @@ public function mostrarPersonajeSecreto()
             ]);
         }
 
+        if (auth()->check()) {
+            $user = auth()->user();
+            $userId = $user->id;
+       
+            // ver si el usuario ya tiene estadisticas
+            $userStats = Stats::where('idUser', $userId)->first();
+       
+            if ($acertado) {
+                // actualizar estadísticas si acierta
+                if (!$userStats) {
+                    $userStats = new Stats();
+                    $userStats->idUser = $userId;
+                    $userStats->currentStreak = 1;
+                    $userStats->totalTries = $numeroIntentos;
+                    $userStats->min_tries_servant = $personajeSecreto->id;
+                    $userStats->min_tries_count = $numeroIntentos;
+                    $userStats->total_guesses = 1;
+                    $userStats->save();
+                } else {
+                    $userStats->currentStreak = $userStats->currentStreak + 1;
+                    $userStats->totalTries = $userStats->totalTries + $numeroIntentos;
+                    $userStats->total_guesses = $userStats->total_guesses + 1;
+            
+                    if ($userStats->min_tries_count === null || $numeroIntentos < $userStats->min_tries_count) {
+                        $userStats->min_tries_servant = $personajeSecreto->id;
+                        $userStats->min_tries_count = $numeroIntentos;
+                    }
+            
+                    $userStats->save();
+                }
+            }
+            
+            
+        }
+       
+        
         session(['resultados' => $resultados]);
 
 
         return redirect()->route('juego');
     }
+
+
+
+
+
 
     public function search(Request $request)
     {

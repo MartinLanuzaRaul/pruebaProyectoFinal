@@ -10,20 +10,23 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('stats', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('idUser'); // Clave foránea a usuarios:id
-            $table->integer('currentStreak')->default(0); 
-            $table->integer('totalTries')->default(0);
-            $table->unsignedBigInteger('min_tries_servant')->nullable(); // Clave foránea a servants:id, nullable si no hay servant asignado
-            $table->timestamps();
+{
+    Schema::create('stats', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('idUser'); // foreign key usuarios:id
+        $table->integer('currentStreak')->default(0); 
+        $table->integer('totalTries')->default(0);
+        $table->unsignedBigInteger('min_tries_servant')->nullable(); // Cforeign key servants:id
+        $table->integer('min_tries_count')->nullable(); 
+        $table->integer('total_guesses')->default(0); 
+        $table->timestamps();
 
-            // Relaciones de claves foráneas
-            $table->foreign('idUser')->references('id')->on('usuarios')->onDelete('cascade');
-            $table->foreign('min_tries_servant')->references('id')->on('servants')->onDelete('set null'); // Eliminación en cascada o establecer a null si se borra un servant
-        });
-    }
+        // foreign keys
+        $table->foreign('idUser')->references('id')->on('users')->onDelete('cascade');
+        $table->foreign('min_tries_servant')->references('id')->on('servants')->onDelete('set null');
+    });
+}
+
 
     /**
      * Reverse the migrations.

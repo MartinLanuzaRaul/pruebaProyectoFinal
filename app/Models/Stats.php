@@ -14,5 +14,7 @@ class Stats extends Model
         'currentStreak',
         'totalTries',
         'min_tries_servant',
+        'min_tries_count',
+        'total_guesses'
     ];
 }

@@ -6,6 +6,8 @@ use App\Http\Controllers\ApiDataController;
 use App\Http\Controllers\GameController;
 use App\Models\Servant;
 use Illuminate\Http\Request;
+use App\Http\Controllers\DashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +52,9 @@ Route::get('/asignarpersonajeSecreto', [GameController::class, 'asignarPersonaje
 Route::get('/personaje-secreto', [GameController::class, 'mostrarPersonajeSecreto']);
 
 Route::get('/home', [GameController::class, 'showHome'])->name('home');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
 
 require __DIR__.'/auth.php';
