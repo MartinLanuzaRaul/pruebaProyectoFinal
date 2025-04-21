@@ -53,6 +53,24 @@ class GameController extends Controller
         public function asignarPersonajeSecreto()
 {
     $fechaActual = gmdate('Y-m-d');
+    $manyana = date('Y-m-d', strtotime('+1 day', strtotime($fechaActual)));
+    //$fechaActual = $manyana;
+
+    if (auth()->check()) {
+        $user = auth()->user();
+        $userStats = Stats::where('idUser', $user->id)->first();
+
+        if ($userStats && $userStats->last_success_date !== null) {
+            $ayer = date('Y-m-d', strtotime('-1 day', strtotime($fechaActual)));
+    
+            if ($userStats->last_success_date != $ayer ) {
+                
+                $userStats->currentStreak = 0;
+                $userStats->save();
+                session(['rachaActual' => 0]);
+            }
+        }
+    }
     
     // Ver personaje de hoy
     $servantSecreto = ServantSecreto::where('fecha', $fechaActual)->first();
@@ -74,6 +92,7 @@ class GameController extends Controller
     $personajeSecreto = Servant::find($servantSecreto->idServant);
     
     return $personajeSecreto;
+
 }
 
 
@@ -151,6 +170,8 @@ class GameController extends Controller
                     $userStats->currentStreak = $userStats->currentStreak + 1;
                     $userStats->totalTries = $userStats->totalTries + $numeroIntentos;
                     $userStats->total_guesses = $userStats->total_guesses + 1;
+                    $userStats->last_success_date = gmdate('Y-m-d'); 
+
             
                     if ($userStats->min_tries_count === null || $numeroIntentos < $userStats->min_tries_count) {
                         $userStats->min_tries_servant = $personajeSecreto->id;
