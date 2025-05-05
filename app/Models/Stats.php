@@ -15,6 +15,8 @@ class Stats extends Model
         'totalTries',
         'min_tries_servant',
         'min_tries_count',
-        'total_guesses'
+        'total_guesses',
+        'numeroIntentosIlimitado',
+        'Unlimited_total_guesses'
     ];
 }

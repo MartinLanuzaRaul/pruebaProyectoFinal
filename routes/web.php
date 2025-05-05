@@ -7,6 +7,8 @@ use App\Http\Controllers\GameController;
 use App\Models\Servant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UnlimitedGameController;
+
 
 
 /*
@@ -54,6 +56,14 @@ Route::get('/personaje-secreto', [GameController::class, 'mostrarPersonajeSecret
 Route::get('/home', [GameController::class, 'showHome'])->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+//modo ilimitado
+Route::get('/juegoIlimitado', [UnlimitedGameController::class, 'showGame'])->name('juegoIlimitado');
+Route::post('/comprobarIlimitado', [UnlimitedGameController::class, 'comprobarIlimitado'])->name('comprobarIlimitado');
+Route::get('/reiniciarIlimitado', [UnlimitedGameController::class, 'reiniciarJuego'])->name('reiniciarIlimitado');
+
+
+
 
 
 
