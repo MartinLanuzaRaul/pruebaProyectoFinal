@@ -21,7 +21,6 @@ class UnlimitedGameController extends Controller
         $stats = Stats::where('idUser', $user->id)->first();
     }
 
-    // Solo asigna un nuevo personaje si no existe ya uno en la sesión
     if (!session()->has('personajeSecretoIlimitado')) {
         $personajeSecreto = $this->asignarPersonajeSecretoIlimitado();
         session(['personajeSecretoIlimitado' => $personajeSecreto]);
@@ -29,8 +28,16 @@ class UnlimitedGameController extends Controller
         $personajeSecreto = session('personajeSecretoIlimitado');
     }
 
-    return view('unlimitedGame', ['stats' => $stats, 'personajeSecreto' => $personajeSecreto]);
+    $rendido = session('rendido', false); 
+    session()->forget('rendido'); 
+
+    return view('unlimitedGame', [
+        'stats' => $stats,
+        'personajeSecreto' => $personajeSecreto,
+        'rendido' => $rendido,
+    ]);
 }
+
 
 
     public function showHome()
@@ -116,12 +123,12 @@ class UnlimitedGameController extends Controller
                 if (!$userStats) {
                     $userStats = new Stats();
                     $userStats->idUser = $userId;
-                    $userStats->UnlimitedTotalTries = $numeroIntentosIlimitado; //HAY QUE AÑADIR LA COLUMNA A LA BASE DE DATOS 
-                    $userStats->Unlimited_total_guesses = 1; //HAY QUE AÑADIR LA COLUMNA A LA BASE DE DATOS 
+                    $userStats->numeroIntentosIlimitado = $numeroIntentosIlimitado; 
+                    $userStats->Unlimited_total_guesses = 1;  
                     $userStats->save();
                 } else {
-                    $userStats->UnlimitedTotalTries = $userStats->totalTries + $numeroIntentosIlimitado;
-                    $userStats->Unlimited_total_guesses = $userStats->total_guesses + 1;
+                    $userStats->numeroIntentosIlimitado = $userStats->numeroIntentosIlimitado + $numeroIntentosIlimitado;
+                    $userStats->Unlimited_total_guesses = $userStats->Unlimited_total_guesses + 1;
 
             
                     $userStats->save();
@@ -152,6 +159,11 @@ class UnlimitedGameController extends Controller
 }
 
 
+public function rendirse()
+{
+    session(['rendido' => true]);
+    return redirect()->route('juegoIlimitado');
+}
 
 
 

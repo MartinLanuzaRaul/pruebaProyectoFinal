@@ -61,6 +61,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/juegoIlimitado', [UnlimitedGameController::class, 'showGame'])->name('juegoIlimitado');
 Route::post('/comprobarIlimitado', [UnlimitedGameController::class, 'comprobarIlimitado'])->name('comprobarIlimitado');
 Route::get('/reiniciarIlimitado', [UnlimitedGameController::class, 'reiniciarJuego'])->name('reiniciarIlimitado');
+Route::get('/rendirse', [UnlimitedGameController::class, 'rendirse'])->name('rendirse');
+
 
 
 

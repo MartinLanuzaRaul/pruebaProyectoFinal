@@ -55,7 +55,17 @@
     width: auto;
     margin-bottom: 5%;
 }
-
+    .give-up-button{
+        padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #da1313;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 5px;
+            margin-bottom: 5px;
+    }
 .tablaServants th,
 .tablaServants td {
     border: 2px solid #ccc;
@@ -201,8 +211,11 @@ foreach (session('resultadosIlimitado', []) as $resultado) {
     }
 }
 ?>
+<form action="{{ route('rendirse') }}" method="GET">
+    <button type="submit" class="give-up-button">Give up</button>
+</form>
 
-@if (!$acertado)
+@if (!$acertado && !$rendido)
 <div class="search-container">
     <form action="{{ route('comprobarIlimitado') }}" method="POST">
         @csrf
@@ -213,10 +226,13 @@ foreach (session('resultadosIlimitado', []) as $resultado) {
     </form>
 </div>
 @else
-<div class="success-message">
-    <h2>You got it!</h2>
-</div>
+    @if ($acertado)
+    <div class="success-message">
+        <h2>You got it!</h2>
+    </div>
+    @endif
 @endif
+
     
 
     <table class="tablaServants">
@@ -289,6 +305,38 @@ foreach (session('resultadosIlimitado', []) as $resultado) {
                 <h2>NICE!</h2>
                 <h2>YOU GUESSED<br>{{ $personajeSecreto->name }}</h2>
                 <p>NUMBER OF TRYS: {{ session('numeroIntentosIlimitado') }}</p>
+            </div>
+            <form action="{{ route('reiniciarIlimitado') }}" method="GET">
+                <button type="submit" class="search-button">Play again</button>
+            </form>
+            
+            
+        </div>
+        <div>
+            <img src="{{ $personajeSecreto->img }}" class="result-img">
+        </div>
+    </div>
+</div>
+</div>
+@endif
+
+@if($rendido && !$acertado)
+    <script>
+        window.onload = function() {
+            const cajaResultado = document.getElementById('cajaResultado');
+            if (cajaResultado) {
+                cajaResultado.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+    <div id="cajaResultado">
+<div class="caja" id="caja">
+    <div class="cajaDentro">
+        <div class="textoCaja">
+            <div>
+                <h2>Ooops!</h2>
+                <h2>THAT WAS A DIFFICULT ONE<br></h2>
+                <p>The Servant was {{ $personajeSecreto->name }}</p>
             </div>
             <form action="{{ route('reiniciarIlimitado') }}" method="GET">
                 <button type="submit" class="search-button">Play again</button>

@@ -93,7 +93,7 @@
     <div class="subtitle">GUESS FATE/GRAND ORDER CHARACTERS</div>
 
     <a href="{{route('juego')}}"><button class="button">Classic</button></a>
-    <a href="{{route('juego')}}"><button class="button">Wordle</button></a>
+    <a href="{{route('juegoIlimitado')}}"><button class="button">Unlimited</button></a>
     
 </body>
 </html>
