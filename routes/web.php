@@ -8,7 +8,7 @@ use App\Models\Servant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UnlimitedGameController;
-
+use App\Http\Controllers\NoblePhantasmGameController;
 
 
 /*
@@ -63,7 +63,8 @@ Route::post('/comprobarIlimitado', [UnlimitedGameController::class, 'comprobarIl
 Route::get('/reiniciarIlimitado', [UnlimitedGameController::class, 'reiniciarJuego'])->name('reiniciarIlimitado');
 Route::get('/rendirse', [UnlimitedGameController::class, 'rendirse'])->name('rendirse');
 
-
+//modo noble fantasma
+Route::get('/juegoNoblePhantasm', [NoblePhantasmGameController::class, 'showGame'])->name('juegoNp');
 
 
 
