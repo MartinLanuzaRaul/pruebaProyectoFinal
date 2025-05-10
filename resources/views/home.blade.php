@@ -45,7 +45,7 @@
             border: none;
             cursor: pointer;
             font-size: 1.2rem;
-            width: 200px;
+            width: 250px;
             transition: background-color 0.3s;
         }
 
@@ -94,6 +94,7 @@
 
     <a href="{{route('juego')}}"><button class="button">Classic</button></a>
     <a href="{{route('juegoIlimitado')}}"><button class="button">Unlimited</button></a>
+    <a href="{{route('juegoNp')}}"><button class="button">Noble Phantasm</button></a>
     
 </body>
 </html>

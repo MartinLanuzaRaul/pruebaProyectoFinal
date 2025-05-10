@@ -65,6 +65,8 @@ Route::get('/rendirse', [UnlimitedGameController::class, 'rendirse'])->name('ren
 
 //modo noble fantasma
 Route::get('/juegoNoblePhantasm', [NoblePhantasmGameController::class, 'showGame'])->name('juegoNp');
+Route::post('/comprobarVideo', [NoblePhantasmGameController::class, 'comprobarVideo'])->name('comprobarVideo');
+
 
 
 

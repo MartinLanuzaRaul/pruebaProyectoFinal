@@ -100,16 +100,137 @@
         .search-button:hover {
             background-color: #0056b3;
         }
+        .caja {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.cajaDentro {
+    background-color: #d9d9d9;
+    border: 5px solid black;
+    padding: 30px;
+    display: flex;
+    gap: 30px;
+    margin-bottom: 10%;
+}
+
+.textoCaja {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.textoCaja h2 {
+    margin: 0;
+}
+
+.textoCaja p {
+    margin: 10px 0;
+}
+
+.textoCaja .importante {
+    margin-top: 50px;
+    font-weight: bold;
+}
+.login {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: black;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        .tablaServants {
+    border-collapse: separate;
+    border-spacing: 10px; /
+    margin: 0 auto; 
+    table-layout: fixed;
+    width: auto;
+    margin-bottom: 5%;
+}
+
+.tablaServants th,
+.tablaServants td {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.tablaServants th {
+    background-color: #e0e0e0;
+}
+
+.correct {
+    background-color: #b6f2b6; 
+}
+
+.incorrect {
+    background-color: #f8b6b6; 
+}
+
+.tablaServants td img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+#feedback{
+    text-align: center;
+}
     </style>
 </head>
 <body>
+    
+    <a href="{{route('login')}}"><button class="login">Account</button></a>
+    <a href="{{route('home')}}"><div class="logo"><img id="logo" src="images/logo.png" height="350px" width="350px"></div></a>
+
+    @if ($stats)
+    <div>Racha actual: {{ $stats->currentStreak }}</div>
+                            
+
+        
+         
+    @endif
+    
+
+    <div class="caja" id="caja">
+        <div class="cajaDentro">
+            <div class="textoCaja">
+                <div>
+                    <h2>GUESS TODAY'S NOBLE PHANTASM</h2>
+                    <p>type any character to begin</p>
+                    <p id="feedback"></p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    @if (session('error'))
+    <div class="error-message"><br>
+        {{ session('error') }}
+    </div>
+@endif
     <div class="game-container">
-        <h1>Adivina el Noble Phantasm ({{ $video }})</h1>
+        
 
         <div class="video-container">
             <video id="npVideo" width="800" controls autoplay muted loop>
                 <source src="videos/{{ $video }}" type="video/mp4">
-                Tu navegador no soporta este formato de video.
+                    Your browser does not support this video format.
             </video>
             <div id="blurEffect" class="blur"></div>
         </div>
@@ -120,8 +241,35 @@
             <div id="suggestions" style="margin-top: 10px; text-align: left; width: 300px; position: absolute; background: white; z-index: 999;"></div>
         </div>
 
-        <p id="feedback"></p>
+        
+
+        
+        <div style="display: flex; justify-content: center; width: 100%;">
+        <table class="tablaServants">
+            <thead>
+                
+            </thead>
+            <tbody>
+                @foreach (session('resultadosVideo', []) as $resultado)
+                <tr>
+                    <td>
+                        <img src="{{ $resultado['atributos']->faceImg }}" alt="Imagen" style="max-width: 100px; height: auto; display: block; margin: auto;">
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const video = document.getElementById('npVideo');
+            if (video) {
+                video.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    </script>
+    
 
     <script>
         let blurLevel = 30;
@@ -129,6 +277,7 @@
         const guessInput = document.getElementById('guessInput');
         const submitGuessButton = document.getElementById('submitGuessButton');
         const feedbackText = document.getElementById('feedback');
+        
 
         submitGuessButton.addEventListener('click', () => {
             let guess = guessInput.value.trim().toLowerCase();
@@ -140,12 +289,14 @@
                 feedbackText.style.color = "green";
                 blurLevel = 0;
                 blurEffect.style.backdropFilter = `blur(${blurLevel}px)`;
+                guessInput.style.display = "none";
+                submitGuessButton.style.display = "none";
             } else {
                 feedbackText.textContent = "Incorrect. Try again.";
                 feedbackText.style.color = "red";
 
                 if (blurLevel > 0) {
-                    blurLevel -= 3;
+                    blurLevel -= 5;
                     blurLevel = Math.max(0, blurLevel);
                     blurEffect.style.backdropFilter = `blur(${blurLevel}px)`;
                 }

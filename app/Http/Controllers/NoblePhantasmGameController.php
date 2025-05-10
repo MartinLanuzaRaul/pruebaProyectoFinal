@@ -40,7 +40,7 @@ class NoblePhantasmGameController extends Controller
 
     $videoFinal = basename($videoSeleccionado); //coger solo el nombre del archivo
     $respuesta = pathinfo($videoSeleccionado, PATHINFO_FILENAME);
-    $respuesta = strtolower(preg_replace('/^np_/', '', $respuesta));
+    $respuesta = strtolower($respuesta);
 
 
     return view('videoNpGame', [
@@ -82,4 +82,47 @@ class NoblePhantasmGameController extends Controller
 
         return response()->json($servants);
     }
+
+
+
+    public function comprobarVideo(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string',
+        ]);
+
+        $resultadosVideo = session('resultadosVideo', []);
+        $numeroIntentosVideo = session('numeroIntentosIlimitado', 0); 
+        $personajeUsuario = Servant::where('name', $request->nombre)->first();
+
+        if (!$personajeUsuario) {
+            return redirect()->route('juegoNp')->with('error', 'There is not a Servant with that name.');
+        }
+
+        foreach ($resultadosVideo as $resultado) {
+            if ($resultado['nombre'] === $personajeUsuario->name) {
+                $numeroIntentosVideo--;
+                session(['numeroIntentosIlimitado' => $numeroIntentosVideo]);
+                return redirect()->route('juegoNp')->with('error', 'You already tried that one.');
+            }
+        }
+        
+        
+        //intentos del usuario
+        
+
+        
+            array_unshift($resultadosVideo, [
+                'nombre' => $personajeUsuario->name,
+                'atributos' => $personajeUsuario
+            ]);
+
+       
+        
+        session(['resultadosVideo' => $resultadosVideo]);
+
+
+        return redirect()->route('juegoNp');
+    }
 }
+
