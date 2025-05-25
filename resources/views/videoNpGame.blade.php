@@ -198,13 +198,11 @@
     <a href="{{route('login')}}"><button class="login">Account</button></a>
     <a href="{{route('home')}}"><div class="logo"><img id="logo" src="images/logo.png" height="350px" width="350px"></div></a>
 
-    @if ($stats)
-    <div>Racha actual: {{ $stats->currentStreak }}</div>
+    
                             
 
         
          
-    @endif
     
 
     <div class="caja" id="caja">

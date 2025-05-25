@@ -106,6 +106,7 @@
     display: flex;
     gap: 30px;
     margin-bottom: 10%;
+    border-radius: 25px;
 }
 
 .textoCaja {
@@ -132,6 +133,7 @@
     max-width: 300px;
     height: auto;
     border: 5px solid black;
+    border-radius: 25px;
 }
 
 .login {
@@ -144,6 +146,9 @@
             padding: 0.5rem 1rem;
             cursor: pointer;
         }
+.error-message{
+    color: red;
+}
 
     </style>
 </head>
@@ -168,6 +173,11 @@
                     <h2>GUESS TODAY'S SERVANT</h2>
                     <p>type any character to begin</p>
                 </div>
+                @if (session('error'))
+    <div class="error-message">
+        {{ session('error') }}
+    </div>
+@endif
             </div>
             
         </div>
@@ -175,22 +185,17 @@
 
     
 
-    @if (session('error'))
-    <div class="error-message">
-        {{ session('error') }}
-    </div>
+    
+
+    @if(isset($personajeSecreto))
+    <script>
+        console.log("Personaje Secreto (Depuración):");
+        console.log("Nombre: {{ ($personajeSecreto->name) }}");
+        console.log("Clase: {{ ($personajeSecreto->className) }}");
+        console.log("Rareza: {{ ($personajeSecreto->rarity) }}");
+    </script>
 @endif
 
-<div class="secreto-container">
-    <h2>Personaje Secreto (Depuración):</h2>
-    @if(isset($personajeSecreto))
-        <p>Nombre: {{ $personajeSecreto->name }}</p>
-        <p>Clase: {{ $personajeSecreto->className }}</p>
-        <p>Rareza: {{ $personajeSecreto->rarity }}</p>
-    @else
-        <p>No hay personaje secreto disponible por el momento.</p>
-    @endif
-</div>
 
 
 <?php

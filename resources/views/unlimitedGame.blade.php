@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="preload" as="image" href="/images/background.png">
     <title>Fatedle - Classic</title>
+    
     <style>
         body {
             display: flex;
@@ -107,6 +108,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+    
 }
 
 .cajaDentro {
@@ -116,6 +118,7 @@
     display: flex;
     gap: 30px;
     margin-bottom: 10%;
+    border-radius: 25px;
 }
 
 .textoCaja {
@@ -142,6 +145,7 @@
     max-width: 300px;
     height: auto;
     border: 5px solid black;
+    border-radius: 25px;
 }
 
 .login {
@@ -190,16 +194,14 @@
     </div>
 @endif
 
-<div class="secreto-container">
-    <h2>Personaje Secreto (Depuración):</h2>
-    @if(isset($personajeSecreto))
-        <p>Nombre: {{ $personajeSecreto->name }}</p>
-        <p>Clase: {{ $personajeSecreto->className }}</p>
-        <p>Rareza: {{ $personajeSecreto->rarity }}</p>
-    @else
-        <p>No hay personaje secreto disponible por el momento.</p>
-    @endif
-</div>
+@if(isset($personajeSecreto))
+    <script>
+        console.log("Personaje Secreto (Depuración):");
+        console.log("Nombre: {{ ($personajeSecreto->name) }}");
+        console.log("Clase: {{ ($personajeSecreto->className) }}");
+        console.log("Rareza: {{ ($personajeSecreto->rarity) }}");
+    </script>
+@endif
 
 
 <?php
@@ -214,6 +216,7 @@ foreach (session('resultadosIlimitado', []) as $resultado) {
 <form action="{{ route('rendirse') }}" method="GET">
     <button type="submit" class="give-up-button">Give up</button>
 </form>
+<br>
 
 @if (!$acertado && !$rendido)
 <div class="search-container">
