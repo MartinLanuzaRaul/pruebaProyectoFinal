@@ -45,7 +45,19 @@
                         <ul class="space-y-2">
                             <li><strong>Total tries:</strong> {{ $stats->numeroIntentosIlimitado }}</li>
                             <li><strong>Total guesses:</strong> {{ $stats->Unlimited_total_guesses }}</li>
-                        </ul>
+                        
+                        <li>
+                            <strong>Best play:</strong>
+                            @if ($minServantIlimitado)
+                                {{ $minServantIlimitado->name }} ({{ $stats->min_tries_count_ilimitado }} tries)
+                                <img src="{{ $minServantIlimitado->img }}" height="200px" width="200px">
+
+                            @else
+                                -
+                            @endif
+                        </li>
+
+                    </ul>
                     @else
                         <p>You don't have any stat yet! Play your first game.</p>
                     @endif

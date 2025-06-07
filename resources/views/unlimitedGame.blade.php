@@ -307,7 +307,7 @@ foreach (session('resultadosIlimitado', []) as $resultado) {
             <div>
                 <h2>NICE!</h2>
                 <h2>YOU GUESSED<br>{{ $personajeSecreto->name }}</h2>
-                <p>NUMBER OF TRYS: {{ session('numeroIntentosIlimitado') }}</p>
+                <p>NUMBER OF TRIES: {{ session('numeroIntentosIlimitado') }}</p>
             </div>
             <form action="{{ route('reiniciarIlimitado') }}" method="GET">
                 <button type="submit" class="search-button">Play again</button>

@@ -294,7 +294,7 @@ foreach (session('resultados', []) as $resultado) {
             <div>
                 <h2>NICE!</h2>
                 <h2>YOU GUESSED<br>{{ $personajeSecreto->name }}</h2>
-                <p>NUMBER OF TRYS: {{ session('numeroIntentos') }}</p>
+                <p>NUMBER OF TRIES: {{ session('numeroIntentos') }}</p>
             </div>
             <div>
                 <div>Next game in</div>

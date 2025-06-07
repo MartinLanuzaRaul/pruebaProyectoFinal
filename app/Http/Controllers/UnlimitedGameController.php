@@ -125,11 +125,17 @@ class UnlimitedGameController extends Controller
                     $userStats->idUser = $userId;
                     $userStats->numeroIntentosIlimitado = $numeroIntentosIlimitado; 
                     $userStats->Unlimited_total_guesses = 1;  
+                    $userStats->min_tries_servant_ilimitado = $personajeSecreto->id;
+                    $userStats->min_tries_count_ilimitado = $numeroIntentosIlimitado;
                     $userStats->save();
                 } else {
                     $userStats->numeroIntentosIlimitado = $userStats->numeroIntentosIlimitado + $numeroIntentosIlimitado;
                     $userStats->Unlimited_total_guesses = $userStats->Unlimited_total_guesses + 1;
 
+                    if ($userStats->min_tries_count_ilimitado === null || $numeroIntentosIlimitado < $userStats->min_tries_count_ilimitado) {
+                        $userStats->min_tries_servant_ilimitado = $personajeSecreto->id;
+                        $userStats->min_tries_count_ilimitado = $numeroIntentosIlimitado;
+                    }
             
                     $userStats->save();
                 }

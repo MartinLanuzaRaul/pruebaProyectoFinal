@@ -14,16 +14,24 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $stats = Stats::where('idUser', $user->id)->first(); 
-
+    
         $minServant = null;
-
-        if ($stats && $stats->min_tries_servant) {
-            $minServant = Servant::find($stats->min_tries_servant);
+        $minServantIlimitado = null;
+    
+        if ($stats) {
+            if ($stats->min_tries_servant) {
+                $minServant = Servant::find($stats->min_tries_servant);
+            }
+            if ($stats->min_tries_servant_ilimitado) {
+                $minServantIlimitado = Servant::find($stats->min_tries_servant_ilimitado);
+            }
         }
-
-
-        //return view('dashboard')->with('stats', $stats, 'minServant', $minServant);
-        return view('dashboard', ['stats' => $stats], ['minServant' => $minServant]);
-
+    
+        return view('dashboard', [
+            'stats' => $stats,
+            'minServant' => $minServant,
+            'minServantIlimitado' => $minServantIlimitado
+        ]);
     }
+    
 }
