@@ -44,7 +44,7 @@ class NoblePhantasmGameController extends Controller
 
 
     return view('videoNpGame', [
-        'stats' => $stats,
+        'stats' => $stats ,
         'video' => $videoFinal,
         'respuesta' => $respuesta,
     ]);

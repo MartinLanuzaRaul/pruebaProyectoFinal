@@ -300,7 +300,7 @@
                 }
             }
 
-            guessInput.value = '';
+            guessInput.value = '' ;
         });
     </script>
     <script>
