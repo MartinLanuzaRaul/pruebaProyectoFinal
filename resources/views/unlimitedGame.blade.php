@@ -159,6 +159,10 @@
             cursor: pointer;
         }
 
+        .success-message{
+    color: white;
+}
+
     </style>
 </head>
 

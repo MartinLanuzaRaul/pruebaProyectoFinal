@@ -150,6 +150,10 @@
     color: red;
 }
 
+.success-message{
+    color: white;
+}
+
     </style>
 </head>
 
